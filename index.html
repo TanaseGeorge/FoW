@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartFoot – Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>SmartFoot</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="catalog.html">Catalog</a>
+      <a href="suggestions.html">Sugestii</a>
+      <a href="stats.html">Statistici</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Găsește încălțămintea potrivită pentru orice ocazie</h2>
+      <p>De la interviuri la campionate de sumo – te acoperim cu stil.</p>
+      <button onclick="scrollToRecom()">Vezi recomandările</button>
+    </section>
+
+    <section class="recommendations" id="recom">
+      <h3>Recomandări de sezon</h3>
+      <div class="cards">
+        <div class="card">
+          <img src="assets/boots.jpg" alt="Cizme pictate" />
+          <h4>Primăvară nocturnă</h4>
+          <p>Se apropie primăvara. Pentru plimbări nocturne, cizmele pictate sunt alegerea ideală!</p>
+        </div>
+        <div class="card">
+          <img src="assets/heels.jpg" alt="Pantofi cu toc de inox" />
+          <h4>Ceremonii dansante</h4>
+          <p>Pentru ceremonii dansante, poartă pantofi cu toc de inox și o togă argintie asortată.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
