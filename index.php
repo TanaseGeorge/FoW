@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Verificăm dacă utilizatorul este autentificat
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -10,10 +19,11 @@
   <header>
     <h1>SmartFoot</h1>
     <nav>
-      <a href="index.html">Home</a>
-      <a href="catalog.html">Catalog</a>
-      <a href="suggestions.html">Sugestii</a>
-      <a href="stats.html">Statistici</a>
+      <a href="index.php" class="active">Home</a>
+      <a href="catalog.php">Catalog</a>
+      <a href="recommendations.php">Sugestii</a>
+      <a href="statistics.php">Statistici</a>
+      <a href="logout.php">Deconectare</a>
     </nav>
   </header>
 
@@ -47,4 +57,4 @@
 
   <script src="script.js"></script>
 </body>
-</html>
+</html> 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFoot - Recomandări</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="recommendations.css">
+</head>
+<body>
+    <header>
+        <h1>SmartFoot</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="recommendations.html" class="active">Sugestii</a>
+            <a href="statistics.php">Statistici</a>
+            <a href="register.html">Register</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Găsește încălțămintea perfectă</h2>
+        
+        <form id="recommendationForm" action="get_recommendations.php" method="POST">
+            <div class="form-group">
+                <label for="occasion">Occasion:</label>
+                <select name="occasion" id="occasion" required>
+                    <option value="">Select an occasion</option>
+                    <option value="business">Business Meeting/Interview</option>
+                    <option value="casual">Casual Everyday</option>
+                    <option value="formal">Formal Event</option>
+                    <option value="sport">Sports/Athletic</option>
+                    <option value="party">Party/Night Out</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="season">Season:</label>
+                <select name="season" id="season" required>
+                    <option value="">Select a season</option>
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="autumn">Autumn</option>
+                    <option value="winter">Winter</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="style">Preferred Style:</label>
+                <select name="style" id="style" required>
+                    <option value="">Select your style</option>
+                    <option value="classic">Classic</option>
+                    <option value="modern">Modern</option>
+                    <option value="sporty">Sporty</option>
+                    <option value="elegant">Elegant</option>
+                    <option value="casual">Casual</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="brand_preference">Preferred Brands:</label>
+                <input type="text" name="brand_preference" id="brand_preference" placeholder="Enter preferred brands (optional)">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email for Recommendations:</label>
+                <input type="email" name="email" id="email" required placeholder="Enter your email">
+            </div>
+
+            <button type="submit">Get Recommendations</button>
+        </form>
+
+        <div id="recommendations" class="recommendations-container"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
+    </footer>
+
+    <script src="recommendations.js"></script>
+</body>
+</html> 
