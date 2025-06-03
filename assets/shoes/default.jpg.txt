@@ -1,5 +1,0 @@
-Imagine implicită pentru încălțăminte
-- Dimensiune: 800x600px
-- Fundal: Gri deschis
-- Text centrat: "Imagine indisponibilă"
-- Logo SmartFoot 

@@ -1,0 +1,78 @@
+/* Secțiuni full width, aerisite */
+.welcome-section,
+.seasonal-recommendations {
+  padding: 3rem 5vw;
+  margin-bottom: 2rem;
+}
+
+.welcome-section {
+  text-align: center;
+  background-image: url('assets/hero-bg.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom center;
+  background-color: #f7f7f7;
+  padding: 4em 1em;
+  height: 40vh;
+  border-radius: 10px;
+  
+  display: flex;
+  flex-direction: column;  
+  justify-content: center; 
+  align-items: center;
+}
+
+.seasonal-recommendations {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Grid de carduri responsive */
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.shoe-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.shoe-card:hover {
+  transform: translateY(-5px);
+}
+
+.shoe-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.shoe-card h3 {
+  color: #2c3e50;
+  margin: 0.5rem 0;
+}
+
+.shoe-description {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.shoe-price {
+  color: #2c3e50;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.shoe-brand {
+  color: #6c757d;
+  font-style: italic;
+}

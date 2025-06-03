@@ -1,12 +1,36 @@
 <?php
 session_start();
+require_once 'db.php';
 
-// Verificăm dacă utilizatorul este autentificat
+// Determină sezonul curent
+function getCurrentSeason() {
+    $month = date('n');
+    if ($month >= 3 && $month <= 5) return 'primavara';
+    if ($month >= 6 && $month <= 8) return 'vara';
+    if ($month >= 9 && $month <= 11) return 'toamna';
+    return 'iarna';
+}
+
+$currentSeason = getCurrentSeason();
+
+try {
+    $query = "SELECT * FROM shoes 
+              WHERE (season = :season OR season = 'all')
+              ORDER BY rating DESC LIMIT 6";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([':season' => $currentSeason]);
+    $seasonalRecommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Error getting seasonal recommendations: " . $e->getMessage());
+    $seasonalRecommendations = [];
+}
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -14,6 +38,7 @@ if (!isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartFoot – Home</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="home.css" />
 </head>
 <body>
   <header>
@@ -21,40 +46,46 @@ if (!isset($_SESSION['user_id'])) {
     <nav>
       <a href="index.php" class="active">Home</a>
       <a href="catalog.php">Catalog</a>
-      <a href="recommendations.php">Sugestii</a>
-      <a href="statistics.php">Statistici</a>
-      <a href="logout.php">Deconectare</a>
+      <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="recommendations.php">Sugestii</a>
+        <a href="statistics.php">Statistici</a>
+        <a href="logout.php">Deconectare</a>
+      <?php else: ?>
+        <a href="login_form.php">Autentificare</a>
+        <a href="register.php">Înregistrare</a>
+      <?php endif; ?>
     </nav>
   </header>
 
-  <main>
-    <section class="hero">
-      <h2>Găsește încălțămintea potrivită pentru orice ocazie</h2>
-      <p>De la interviuri la campionate de sumo – te acoperim cu stil.</p>
-      <button onclick="scrollToRecom()">Vezi recomandările</button>
-    </section>
+  <!-- SECȚIUNI FĂRĂ .container -->
+  <section class="welcome-section">
+    <h2>Bine ați venit la SmartFoot!</h2>
+    <p>Descoperiți colecția noastră de încălțăminte și primiți recomandări personalizate.</p>
+  </section>
 
-    <section class="recommendations" id="recom">
-      <h3>Recomandări de sezon</h3>
-      <div class="cards">
-        <div class="card">
-          <img src="assets/boots.jpg" alt="Cizme pictate" />
-          <h4>Primăvară nocturnă</h4>
-          <p>Se apropie primăvara. Pentru plimbări nocturne, cizmele pictate sunt alegerea ideală!</p>
-        </div>
-        <div class="card">
-          <img src="assets/heels.jpg" alt="Pantofi cu toc de inox" />
-          <h4>Ceremonii dansante</h4>
-          <p>Pentru ceremonii dansante, poartă pantofi cu toc de inox și o togă argintie asortată.</p>
-        </div>
+  <section class="seasonal-recommendations">
+    <h2>Recomandări pentru <?php echo $currentSeason; ?></h2>
+    <?php if (!empty($seasonalRecommendations)): ?>
+      <div class="recommendations-grid">
+        <?php foreach ($seasonalRecommendations as $shoe): ?>
+          <div class="shoe-card">
+            <?php if (!empty($shoe['image_url'])): ?>
+              <img src="<?php echo htmlspecialchars($shoe['image_url']); ?>" alt="<?php echo htmlspecialchars($shoe['name']); ?>">
+            <?php endif; ?>
+            <h3><?php echo htmlspecialchars($shoe['name']); ?></h3>
+            <p class="shoe-description"><?php echo htmlspecialchars($shoe['description']); ?></p>
+            <p class="shoe-price">Preț: <?php echo number_format($shoe['price'], 2); ?> RON</p>
+            <p class="shoe-brand">Brand: <?php echo htmlspecialchars($shoe['brand']); ?></p>
+          </div>
+        <?php endforeach; ?>
       </div>
-    </section>
-  </main>
+    <?php else: ?>
+      <p>Ne pare rău, nu sunt disponibile recomandări pentru acest sezon momentan.</p>
+    <?php endif; ?>
+  </section>
 
   <footer>
     <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
   </footer>
-
-  <script src="script.js"></script>
 </body>
-</html> 
+</html>
