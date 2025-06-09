@@ -25,12 +25,18 @@ $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
     <header>
-        <div><strong>ShoeReco</strong></div>
+        <h1>SmartFoot</h1>
         <nav>
-            <a href="index.php">Acasă</a>
-            <a href="catalog.php">Catalog</a>
-            <a href="recommendations.php">Recomandări</a>
+         <a href="index.php" class="active">Home</a>
+         <a href="catalog.php">Catalog</a>
+         <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="recommendations.php">Recomandari</a>
+            <a href="statistics.php">Statistici</a>
             <a href="logout.php">Deconectare</a>
+        <?php else: ?>
+            <a href="login_form.php">Autentificare</a>
+            <a href="register.php">Înregistrare</a>
+        <?php endif; ?>
         </nav>
     </header>
 

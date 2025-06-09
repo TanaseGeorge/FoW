@@ -8,12 +8,53 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$filters = [
+  'search' => $_GET['search'] ?? '',
+  'occasion' => $_GET['occasion'] ?? '',
+  'season' => $_GET['season'] ?? '',
+  'style' => $_GET['style'] ?? '',
+  'price_min' => $_GET['price_min'] ?? '',
+  'price_max' => $_GET['price_max'] ?? ''
+];
+
+$where = [];
+$params = [];
+
+if ($filters['search']) {
+  $where[] = "(name ILIKE :search OR brand ILIKE :search OR description ILIKE :search)";
+  $params[':search'] = '%' . $filters['search'] . '%';
+}
+if ($filters['occasion']) {
+  $where[] = "occasion = :occasion";
+  $params[':occasion'] = $filters['occasion'];
+}
+if ($filters['season']) {
+  $where[] = "season = :season";
+  $params[':season'] = $filters['season'];
+}
+if ($filters['style']) {
+  $where[] = "style = :style";
+  $params[':style'] = $filters['style'];
+}
+if (is_numeric($filters['price_min'])) {
+  $where[] = "price >= :price_min";
+  $params[':price_min'] = $filters['price_min'];
+}
+if (is_numeric($filters['price_max'])) {
+  $where[] = "price <= :price_max";
+  $params[':price_max'] = $filters['price_max'];
+}
+
+$whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+
 // Preluăm produsele din baza de date
 try {
-    $stmt = $pdo->query("SELECT * FROM shoes ORDER BY id DESC");
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $stmt = $pdo->prepare("SELECT * FROM shoes $whereClause ORDER BY id DESC");
+  $stmt->execute($params);
+  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch(PDOException $e) {
-    $error = "Eroare la preluarea produselor: " . $e->getMessage();
+  $error = "Eroare la preluarea produselor: " . $e->getMessage();
 }
 
 // Array cu imagini alternative pentru fiecare tip de încălțăminte
@@ -135,6 +176,35 @@ $defaultImages = [
             border-radius: 4px;
             margin: 1rem;
         }
+
+        .filters {
+            max-width: 1000px;
+            margin: 2rem auto 0;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .filters form {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .filters input,
+        .filters select {
+            padding: 0.5rem;
+            width: 100%;
+        }
+        .filters button {
+            grid-column: 1 / -1;
+            padding: 0.6rem;
+            background: #2196f3;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -150,10 +220,41 @@ $defaultImages = [
     </header>
 
     <main>
+        
+    <section class="filters">
+          <form method="GET">
+              <input type="text" name="search" placeholder="Căutare..." value="<?= htmlspecialchars($filters['search']) ?>">
+              <select name="occasion">
+                  <option value="">-- Ocazie --</option>
+                  <option value="casual" <?= $filters['occasion']==='casual' ? 'selected' : '' ?>>Casual</option>
+                  <option value="sport" <?= $filters['occasion']==='sport' ? 'selected' : '' ?>>Sport</option>
+                  <option value="elegant" <?= $filters['occasion']==='elegant' ? 'selected' : '' ?>>Elegant</option>
+              </select>
+              <select name="season">
+                  <option value="">-- Sezon --</option>
+                  <option value="vara" <?= $filters['season']==='vara' ? 'selected' : '' ?>>Vara</option>
+                  <option value="iarna" <?= $filters['season']==='iarna' ? 'selected' : '' ?>>Iarna</option>
+                  <option value="toamna" <?= $filters['season']==='toamna' ? 'selected' : '' ?>>Toamna</option>
+                  <option value="primavara" <?= $filters['season']==='primavara' ? 'selected' : '' ?>>Primăvara</option>
+              </select>
+              <select name="style">
+                  <option value="">-- Stil --</option>
+                  <option value="sneakers" <?= $filters['style']==='sneakers' ? 'selected' : '' ?>>Sneakers</option>
+                  <option value="sandale" <?= $filters['style']==='sandale' ? 'selected' : '' ?>>Sandale</option>
+                  <option value="papuci" <?= $filters['style']==='papuci' ? 'selected' : '' ?>>Papuci</option>
+                  <option value="cizme" <?= $filters['style']==='cizme' ? 'selected' : '' ?>>Cizme</option>
+              </select>
+              <input type="number" name="price_min" placeholder="Preț minim" value="<?= htmlspecialchars($filters['price_min']) ?>">
+              <input type="number" name="price_max" placeholder="Preț maxim" value="<?= htmlspecialchars($filters['price_max']) ?>">
+              <button type="submit">Filtrează</button>
+          </form>
+    </section>
         <section class="product-grid">
-            <?php if (isset($error)): ?>
-                <p class="error"><?php echo $error; ?></p>
-            <?php else: ?>
+                <?php if (isset($error)): ?>
+                        <p class="error"><?php echo $error; ?></p>
+                <?php elseif (empty($products)): ?>
+                        <p class="error">Nu am găsit produse care să corespundă filtrului.</p>
+                <?php else: ?>
                 <?php foreach ($products as $product): ?>
                     <div class="product-card">
                         <?php

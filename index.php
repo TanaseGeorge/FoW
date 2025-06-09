@@ -47,7 +47,7 @@ if (!isset($_SESSION['user_id'])) {
       <a href="index.php" class="active">Home</a>
       <a href="catalog.php">Catalog</a>
       <?php if (isset($_SESSION['user_id'])): ?>
-        <a href="recommendations.php">Sugestii</a>
+        <a href="recommendations.php">Recomandari</a>
         <a href="statistics.php">Statistici</a>
         <a href="logout.php">Deconectare</a>
       <?php else: ?>
@@ -57,7 +57,6 @@ if (!isset($_SESSION['user_id'])) {
     </nav>
   </header>
 
-  <!-- SECȚIUNI FĂRĂ .container -->
   <section class="welcome-section">
     <h2>Bine ați venit la SmartFoot!</h2>
     <p>Descoperiți colecția noastră de încălțăminte și primiți recomandări personalizate.</p>
