@@ -70,6 +70,7 @@ $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <form action="export_statistics.php" method="POST" style="margin-top: 2rem;">
                 <button type="submit" name="format" value="csv">Descarcă CSV</button>
                 <button type="submit" name="format" value="xml">Descarcă XML</button>
+                <button type="submit" name="format" value="json">Descarcă JSON</button>
                 <button type="submit" name="format" value="html" formaction="export_statistics.php" formtarget="_blank">Vezi HTML separat</button>
             </form>
         <?php endif; ?>

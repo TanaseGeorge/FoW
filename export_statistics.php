@@ -63,7 +63,7 @@ function generateSuggestion($occasion, $season, $style) {
 foreach ($rows as &$row) {
     $row['suggestion'] = generateSuggestion($row['occasion'], $row['season'], $row['style']);
 }
-unset($row); // good practice
+unset($row);
 
 // Generare în funcție de format
 switch ($format) {
@@ -75,8 +75,11 @@ switch ($format) {
         fputcsv($output, ['Ocazie', 'Sezon', 'Stil', 'Dată', 'Sugestie']);
         foreach ($rows as $row) {
             fputcsv($output, [
-                $row['occasion'], $row['season'], $row['style'],
-                $row['created_at'], $row['suggestion']
+                htmlspecialchars($row['occasion'], ENT_QUOTES, 'UTF-8'), 
+                htmlspecialchars($row['season'], ENT_QUOTES, 'UTF-8'), 
+                htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8'), 
+                htmlspecialchars($row['suggestion'], ENT_QUOTES, 'UTF-8')
             ]);
         }
         fclose($output);
@@ -89,33 +92,71 @@ switch ($format) {
         $xml = new SimpleXMLElement('<statistics/>');
         foreach ($rows as $row) {
             $entry = $xml->addChild('entry');
-            $entry->addChild('occasion', $row['occasion']);
-            $entry->addChild('season', $row['season']);
-            $entry->addChild('style', $row['style']);
-            $entry->addChild('created_at', $row['created_at']);
-            $entry->addChild('suggestion', $row['suggestion']);
+            $entry->addChild('occasion', htmlspecialchars($row['occasion'], ENT_QUOTES, 'UTF-8'));
+            $entry->addChild('season', htmlspecialchars($row['season'], ENT_QUOTES, 'UTF-8'));
+            $entry->addChild('style', htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8'));
+            $entry->addChild('created_at', htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8'));
+            $entry->addChild('suggestion', htmlspecialchars($row['suggestion'], ENT_QUOTES, 'UTF-8'));
         }
         echo $xml->asXML();
         break;
 
+    case 'json':
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="statistics.json"');
+        
+        // Sanitizează datele pentru JSON
+        $jsonData = [];
+        foreach ($rows as $row) {
+            $jsonData[] = [
+                'occasion' => htmlspecialchars($row['occasion'], ENT_QUOTES, 'UTF-8'),
+                'season' => htmlspecialchars($row['season'], ENT_QUOTES, 'UTF-8'),
+                'style' => htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8'),
+                'created_at' => htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8'),
+                'suggestion' => htmlspecialchars($row['suggestion'], ENT_QUOTES, 'UTF-8')
+            ];
+        }
+        
+        echo json_encode([
+            'format' => 'json',
+            'exported_at' => date('Y-m-d H:i:s'),
+            'total_records' => count($jsonData),
+            'user_id' => $user_id,
+            'statistics' => $jsonData
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        break;
+
     case 'html':
-        echo "<!DOCTYPE html><html lang='ro'><head><meta charset='UTF-8'><title>Statistici HTML</title></head><body>";
-        echo "<h2>Statistici exportate</h2>";
-        echo "<table border='1' cellpadding='8' cellspacing='0'>";
+        echo "<!DOCTYPE html><html lang='ro'><head><meta charset='UTF-8'><title>Statistici HTML</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #f2f2f2; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .suggestion { max-width: 300px; word-wrap: break-word; }
+        </style></head><body>";
+        echo "<h2>Statistici exportate - " . date('Y-m-d H:i:s') . "</h2>";
+        echo "<p><strong>Numărul total de înregistrări:</strong> " . count($rows) . "</p>";
+        echo "<table>";
         echo "<thead><tr><th>Ocazie</th><th>Sezon</th><th>Stil</th><th>Dată</th><th>Sugestie</th></tr></thead><tbody>";
         foreach ($rows as $row) {
             echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['occasion']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['season']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['style']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['suggestion']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['occasion'], ENT_QUOTES, 'UTF-8') . "</td>";
+            echo "<td>" . htmlspecialchars($row['season'], ENT_QUOTES, 'UTF-8') . "</td>";
+            echo "<td>" . htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8') . "</td>";
+            echo "<td>" . htmlspecialchars($row['created_at'], ENT_QUOTES, 'UTF-8') . "</td>";
+            echo "<td class='suggestion'>" . htmlspecialchars($row['suggestion'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "</tr>";
         }
-        echo "</tbody></table></body></html>";
+        echo "</tbody></table>";
+        echo "<hr><p><em>Exportat din aplicația ShoeReco</em></p>";
+        echo "</body></html>";
         break;
 
     default:
-        echo "Format invalid.";
+        http_response_code(400);
+        echo "Format invalid. Formate acceptate: csv, xml, json, html";
         break;
 }
+?>
