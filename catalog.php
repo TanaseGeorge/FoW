@@ -1,72 +1,3 @@
-<?php
-session_start();
-require_once 'db.php';
-
-// Verificăm dacă utilizatorul este autentificat
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-$filters = [
-  'search' => $_GET['search'] ?? '',
-  'occasion' => $_GET['occasion'] ?? '',
-  'season' => $_GET['season'] ?? '',
-  'style' => $_GET['style'] ?? '',
-  'price_min' => $_GET['price_min'] ?? '',
-  'price_max' => $_GET['price_max'] ?? ''
-];
-
-$where = [];
-$params = [];
-
-if ($filters['search']) {
-  $where[] = "(name ILIKE :search OR brand ILIKE :search OR description ILIKE :search)";
-  $params[':search'] = '%' . $filters['search'] . '%';
-}
-if ($filters['occasion']) {
-  $where[] = "occasion = :occasion";
-  $params[':occasion'] = $filters['occasion'];
-}
-if ($filters['season']) {
-  $where[] = "season = :season";
-  $params[':season'] = $filters['season'];
-}
-if ($filters['style']) {
-  $where[] = "style = :style";
-  $params[':style'] = $filters['style'];
-}
-if (is_numeric($filters['price_min'])) {
-  $where[] = "price >= :price_min";
-  $params[':price_min'] = $filters['price_min'];
-}
-if (is_numeric($filters['price_max'])) {
-  $where[] = "price <= :price_max";
-  $params[':price_max'] = $filters['price_max'];
-}
-
-$whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-
-
-// Preluăm produsele din baza de date
-try {
-  $stmt = $pdo->prepare("SELECT * FROM shoes $whereClause ORDER BY id DESC");
-  $stmt->execute($params);
-  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch(PDOException $e) {
-  $error = "Eroare la preluarea produselor: " . $e->getMessage();
-}
-
-// Array cu imagini alternative pentru fiecare tip de încălțăminte
-$defaultImages = [
-    'pantofi' => 'https://images.unsplash.com/photo-1449505278894-297fdb3edbc1',
-    'sandale' => 'https://images.unsplash.com/photo-1562273138-f46be4ebdf33',
-    'cizme' => 'https://images.unsplash.com/photo-1542280756-74b2f55e73ab',
-    'papuci' => 'https://images.unsplash.com/photo-1545231027-637d2f6210f8',
-    'sneakers' => 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2'
-];
-
-?>
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -74,138 +5,8 @@ $defaultImages = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFoot - Catalog</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            overflow: hidden;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-        }
-
-        .product-name {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-        }
-
-        .product-brand {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .product-description {
-            color: #444;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
-
-        .product-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .product-price {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .product-rating {
-            display: flex;
-            align-items: center;
-            color: #f39c12;
-            font-weight: bold;
-        }
-
-        .product-rating::before {
-            content: "★";
-            margin-right: 4px;
-        }
-
-        .product-meta {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .product-meta span {
-            background: #f8f9fa;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            color: #666;
-            text-transform: capitalize;
-        }
-
-        .error {
-            color: #e74c3c;
-            text-align: center;
-            padding: 1rem;
-            background: #fdf0ed;
-            border-radius: 4px;
-            margin: 1rem;
-        }
-
-        .filters {
-            max-width: 1000px;
-            margin: 2rem auto 0;
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-        .filters form {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .filters input,
-        .filters select {
-            padding: 0.5rem;
-            width: 100%;
-        }
-        .filters button {
-            grid-column: 1 / -1;
-            padding: 0.6rem;
-            background: #2196f3;
-            color: white;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="Styling/catalogstyle.css">
+   
 </head>
 <body>
     <header>
@@ -219,74 +20,323 @@ $defaultImages = [
         </nav>
     </header>
 
-    <main>
+    <main>        
+        <!-- Filtre -->
+        <div class="filters">
+            <!-- Căutare după cuvinte cheie -->
+            <input type="text" id="searchFilter" placeholder="Căutare..." />
+            
+            <!-- Filtru ocazie -->
+            <select id="occasionFilter">
+                <option value="">-- Ocazie --</option>
+                <option value="casual">Casual</option>
+                <option value="sport">Sport</option>
+                <option value="elegant">Elegant</option>
+            </select>
+            
+            <!-- Filtru sezon -->
+            <select id="seasonFilter">
+                <option value="">-- Sezon --</option>
+                <option value="vara">Vara</option>
+                <option value="iarna">Iarna</option>
+                <option value="toamna">Toamna</option>
+                <option value="primavara">Primăvara</option>
+            </select>
+            
+            <!-- Filtru stil -->
+            <select id="styleFilter">
+                <option value="">-- Stil --</option>
+                <option value="sneakers">Sneakers</option>
+                <option value="sandale">Sandale</option>
+                <option value="papuci">Papuci</option>
+                <option value="cizme">Cizme</option>
+            </select>
+            
+            <!-- Preț minim și maxim (ca în versiunea veche) -->
+            <input type="number" id="priceMinFilter" placeholder="Preț minim" />
+            <input type="number" id="priceMaxFilter" placeholder="Preț maxim" />
+            
+            <button id="applyFilters">Filtrează</button>
+            <button id="clearFilters">Resetează</button>
+        </div>
         
-    <section class="filters">
-          <form method="GET">
-              <input type="text" name="search" placeholder="Căutare..." value="<?= htmlspecialchars($filters['search']) ?>">
-              <select name="occasion">
-                  <option value="">-- Ocazie --</option>
-                  <option value="casual" <?= $filters['occasion']==='casual' ? 'selected' : '' ?>>Casual</option>
-                  <option value="sport" <?= $filters['occasion']==='sport' ? 'selected' : '' ?>>Sport</option>
-                  <option value="elegant" <?= $filters['occasion']==='elegant' ? 'selected' : '' ?>>Elegant</option>
-              </select>
-              <select name="season">
-                  <option value="">-- Sezon --</option>
-                  <option value="vara" <?= $filters['season']==='vara' ? 'selected' : '' ?>>Vara</option>
-                  <option value="iarna" <?= $filters['season']==='iarna' ? 'selected' : '' ?>>Iarna</option>
-                  <option value="toamna" <?= $filters['season']==='toamna' ? 'selected' : '' ?>>Toamna</option>
-                  <option value="primavara" <?= $filters['season']==='primavara' ? 'selected' : '' ?>>Primăvara</option>
-              </select>
-              <select name="style">
-                  <option value="">-- Stil --</option>
-                  <option value="sneakers" <?= $filters['style']==='sneakers' ? 'selected' : '' ?>>Sneakers</option>
-                  <option value="sandale" <?= $filters['style']==='sandale' ? 'selected' : '' ?>>Sandale</option>
-                  <option value="papuci" <?= $filters['style']==='papuci' ? 'selected' : '' ?>>Papuci</option>
-                  <option value="cizme" <?= $filters['style']==='cizme' ? 'selected' : '' ?>>Cizme</option>
-              </select>
-              <input type="number" name="price_min" placeholder="Preț minim" value="<?= htmlspecialchars($filters['price_min']) ?>">
-              <input type="number" name="price_max" placeholder="Preț maxim" value="<?= htmlspecialchars($filters['price_max']) ?>">
-              <button type="submit">Filtrează</button>
-          </form>
-    </section>
-        <section class="product-grid">
-                <?php if (isset($error)): ?>
-                        <p class="error"><?php echo $error; ?></p>
-                <?php elseif (empty($products)): ?>
-                        <p class="error">Nu am găsit produse care să corespundă filtrului.</p>
-                <?php else: ?>
-                <?php foreach ($products as $product): ?>
-                    <div class="product-card">
-                        <?php
-                        // Folosim imaginea implicită pentru tipul de încălțăminte dacă imaginea principală nu se încarcă
-                        $defaultImage = $defaultImages[$product['style']] ?? $defaultImages['pantofi'];
-                        ?>
-                        <img src="<?php echo htmlspecialchars($product['image_url']); ?>" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>"
-                             class="product-image"
-                             onerror="this.src='<?php echo $defaultImage; ?>'">
-                        <div class="product-info">
-                            <h2 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h2>
-                            <div class="product-brand"><?php echo htmlspecialchars($product['brand']); ?></div>
-                            <p class="product-description"><?php echo htmlspecialchars($product['description']); ?></p>
-                            <div class="product-meta">
-                                <span><?php echo htmlspecialchars($product['occasion']); ?></span>
-                                <span><?php echo htmlspecialchars($product['season']); ?></span>
-                                <span><?php echo htmlspecialchars($product['style']); ?></span>
-                            </div>
-                            <div class="product-details">
-                                <div class="product-price"><?php echo number_format($product['price'], 2); ?> RON</div>
-                                <div class="product-rating"><?php echo number_format($product['rating'], 1); ?></div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </section>
+        <!-- Container pentru produse -->
+        <div id="productsContainer">
+            <div class="loading">Se încarcă produsele...</div>
+        </div>
+        
+        <!-- Paginare -->
+        <div id="paginationContainer"></div>
     </main>
 
     <footer>
-        <p>&copy; 2024 SmartFoot. Toate drepturile rezervate.</p>
+        <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
     </footer>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let isLoading = false;
+
+        // Referințe la elemente CORECTE (fără brandFilter)
+        const productsContainer = document.getElementById('productsContainer');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const searchFilter = document.getElementById('searchFilter');
+        const occasionFilter = document.getElementById('occasionFilter');
+        const seasonFilter = document.getElementById('seasonFilter');
+        const styleFilter = document.getElementById('styleFilter');
+        const priceMinFilter = document.getElementById('priceMinFilter');
+        const priceMaxFilter = document.getElementById('priceMaxFilter');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+
+        /**
+         * Încarcă produsele de pe server
+         */
+        async function loadProducts(page = 1, filters = {}) {
+            if (isLoading) return;
+            
+            isLoading = true;
+            productsContainer.innerHTML = '<div class="loading">Se încarcă produsele...</div>';
+            
+            try {
+                // Construiește URL-ul cu parametrii
+                const params = new URLSearchParams({
+                    page: page,
+                    limit: 12,
+                    ...filters
+                });
+                
+                const response = await fetch(`api.php?action=catalog&${params}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayProducts(result.data.products);
+                    setupPagination(result.data.pagination);
+                    currentPage = result.data.pagination.page;
+                    totalPages = result.data.pagination.pages;
+                } else {
+                    showError(result.message || 'Eroare la încărcarea produselor');
+                }
+                
+            } catch (error) {
+                console.error('Eroare de rețea:', error);
+                showError('Eroare de conexiune. Verificați internetul și încercați din nou.');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        /**
+         * Afișează produsele în grid
+         */
+        function displayProducts(products) {
+            if (!products || products.length === 0) {
+                productsContainer.innerHTML = '<div class="error">Nu s-au găsit produse pentru filtrele selectate.</div>';
+                return;
+            }
+            
+            const grid = document.createElement('div');
+            grid.className = 'product-grid';
+            
+            products.forEach(product => {
+                const card = createProductCard(product);
+                grid.appendChild(card);
+            });
+            
+            productsContainer.innerHTML = '';
+            productsContainer.appendChild(grid);
+        }
+
+        /**
+         * Creează cardul pentru un produs
+         */
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            // Imaginea cu fallback
+            const imageUrl = product.image_url || 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400';
+            
+            card.innerHTML = `
+                <img src="${imageUrl}" 
+                    alt="${product.name}" 
+                    class="product-image"
+                    onerror="this.src='https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400'">
+                <div class="product-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <div class="product-brand">${product.brand}</div>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-meta">
+                        <span>${product.occasion}</span>
+                        <span>${product.season}</span>
+                        <span>${product.style}</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">${product.price} RON</div>
+                        <div class="product-rating">★ ${product.rating}</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        /**
+         * Configurează paginarea
+         */
+        function setupPagination(pagination) {
+            if (pagination.pages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '<div class="pagination">';
+            
+            // Buton Previous
+            paginationHTML += `
+                <button ${pagination.page <= 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    &laquo; Anterior
+                </button>
+            `;
+            
+            // Numerele paginilor
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.pages, pagination.page + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += '<button onclick="changePage(1)">1</button>';
+                if (startPage > 2) {
+                    paginationHTML += '<span>...</span>';
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === pagination.page ? 'active' : '';
+                paginationHTML += `<button class="${activeClass}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < pagination.pages) {
+                if (endPage < pagination.pages - 1) {
+                    paginationHTML += '<span>...</span>';
+                }
+                paginationHTML += `<button onclick="changePage(${pagination.pages})">${pagination.pages}</button>`;
+            }
+            
+            // Buton Next
+            paginationHTML += `
+                <button ${pagination.page >= pagination.pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    Următorul &raquo;
+                </button>
+            `;
+            
+            paginationHTML += '</div>';
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        /**
+         * Schimbă pagina
+         */
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage || isLoading) {
+                return;
+            }
+            
+            const filters = getCurrentFilters();
+            loadProducts(page, filters);
+            
+            // Scroll la top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * Obține filtrele curente - CORECTAT
+         */
+        function getCurrentFilters() {
+            const filters = {};
+            
+            if (searchFilter.value.trim()) filters.search = searchFilter.value.trim();
+            if (occasionFilter.value) filters.occasion = occasionFilter.value;
+            if (seasonFilter.value) filters.season = seasonFilter.value;
+            if (styleFilter.value) filters.style = styleFilter.value;
+            
+            // Prețuri separate (ca în versiunea veche)
+            if (priceMinFilter.value) filters.price_min = priceMinFilter.value;
+            if (priceMaxFilter.value) filters.price_max = priceMaxFilter.value;
+            
+            return filters;
+        }
+
+        /**
+         * Aplică filtrele
+         */
+        function applyFilters() {
+            const filters = getCurrentFilters();
+            currentPage = 1; // Reset la prima pagină
+            loadProducts(1, filters);
+        }
+
+        /**
+         * Resetează filtrele - CORECTAT
+         */
+        function clearFilters() {
+            searchFilter.value = '';
+            occasionFilter.value = '';
+            seasonFilter.value = '';
+            styleFilter.value = '';
+            priceMinFilter.value = '';
+            priceMaxFilter.value = '';
+            applyFilters();
+        }
+
+        /**
+         * Afișează eroare
+         */
+        function showError(message) {
+            productsContainer.innerHTML = `<div class="error">${message}</div>`;
+            paginationContainer.innerHTML = '';
+        }
+
+        // Event listeners
+        applyFiltersBtn.addEventListener('click', applyFilters);
+        clearFiltersBtn.addEventListener('click', clearFilters);
+
+        // Auto-aplicare pentru toate filtrele - CORECTAT
+        [searchFilter, occasionFilter, seasonFilter, styleFilter, priceMinFilter, priceMaxFilter].forEach(filter => {
+            filter.addEventListener('change', () => {
+                clearTimeout(window.filterTimeout);
+                window.filterTimeout = setTimeout(applyFilters, 500);
+            });
+            
+            // Pentru search și preț, aplică la fiecare tastă (cu debounce)
+            if (filter.type === 'text' || filter.type === 'number') {
+                filter.addEventListener('input', () => {
+                    clearTimeout(window.filterTimeout);
+                    window.filterTimeout = setTimeout(applyFilters, 800);
+                });
+            }
+        });
+
+        // Încarcă produsele la încărcarea paginii
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (currentPage > 1) changePage(currentPage - 1);
+                    break;
+                case 'ArrowRight':
+                    if (currentPage < totalPages) changePage(currentPage + 1);
+                    break;
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>

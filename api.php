@@ -106,27 +106,53 @@ try {
                 $limit = intval($_GET['limit'] ?? 12);
                 $offset = ($page - 1) * $limit;
                 
-                // Filtre opționale
-                $brand = sanitize($_GET['brand'] ?? '');
-                $style = sanitize($_GET['style'] ?? '');
+                // Filtre exacte ca în versiunea veche
+                $search = sanitize($_GET['search'] ?? '');
                 $occasion = sanitize($_GET['occasion'] ?? '');
+                $season = sanitize($_GET['season'] ?? '');
+                $style = sanitize($_GET['style'] ?? '');
+                $priceMin = $_GET['price_min'] ?? '';
+                $priceMax = $_GET['price_max'] ?? '';
                 
                 $whereClause = [];
                 $params = [];
                 
-                if ($brand) {
-                    $whereClause[] = "brand ILIKE ?";
-                    $params[] = "%$brand%";
+                // Căutare în nume și descriere
+                if ($search) {
+                    $whereClause[] = "(name ILIKE ? OR description ILIKE ? OR brand ILIKE ?)";
+                    $params[] = "%$search%";
+                    $params[] = "%$search%";
+                    $params[] = "%$search%";
                 }
                 
+                // Filtru ocazie
+                if ($occasion) {
+                    $whereClause[] = "occasion = ?";
+                    $params[] = $occasion;
+                }
+                
+                // Filtru sezon
+                if ($season) {
+                    $whereClause[] = "season = ?";
+                    $params[] = $season;
+                }
+                
+                // Filtru stil
                 if ($style) {
                     $whereClause[] = "style = ?";
                     $params[] = $style;
                 }
                 
-                if ($occasion) {
-                    $whereClause[] = "occasion = ?";
-                    $params[] = $occasion;
+                // Filtru preț minim (ca în versiunea veche)
+                if ($priceMin !== '' && is_numeric($priceMin)) {
+                    $whereClause[] = "price >= ?";
+                    $params[] = floatval($priceMin);
+                }
+                
+                // Filtru preț maxim (ca în versiunea veche)
+                if ($priceMax !== '' && is_numeric($priceMax)) {
+                    $whereClause[] = "price <= ?";
+                    $params[] = floatval($priceMax);
                 }
                 
                 $where = $whereClause ? 'WHERE ' . implode(' AND ', $whereClause) : '';

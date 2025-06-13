@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrare - ShoeReco</title>
+    <title>Panel Administrare - SmartFoot</title>
     <style>
         * {
             margin: 0;
@@ -249,7 +249,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🛠️ Panel Administrare ShoeReco</h1>
+        <h1>Panel Administrare SmartFoot</h1>
         <div>
             <span id="adminUser">Admin</span>
             <a href="index.php" class="btn btn-primary">Înapoi la site</a>
@@ -258,10 +258,10 @@
     </div>
     
     <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
-        <button class="nav-tab" data-tab="users">👥 Utilizatori</button>
-        <button class="nav-tab" data-tab="products">👟 Produse</button>
-        <button class="nav-tab" data-tab="statistics">📈 Statistici</button>
+        <button class="nav-tab active" data-tab="dashboard"> Dashboard</button>
+        <button class="nav-tab" data-tab="users">Utilizatori</button>
+        <button class="nav-tab" data-tab="products">Produse</button>
+        <button class="nav-tab" data-tab="statistics">Statistici</button>
     </div>
     
     <div class="main-content">
@@ -301,7 +301,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3>Gestionare Utilizatori</h3>
-                    <button class="btn btn-primary" onclick="showAddUserModal()">➕ Adaugă Utilizator</button>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">Adaugă Utilizator</button>
                 </div>
                 <div class="card-body">
                     <div id="usersContent">Se încarcă utilizatorii...</div>
@@ -314,7 +314,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3>Gestionare Produse</h3>
-                    <button class="btn btn-primary" onclick="showAddProductModal()">➕ Adaugă Produs</button>
+                    <button class="btn btn-primary" onclick="showAddProductModal()">Adaugă Produs</button>
                 </div>
                 <div class="card-body">
                     <div id="productsContent">Se încarcă produsele...</div>
@@ -327,7 +327,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3>Statistici Detaliate</h3>
-                    <button class="btn btn-success" onclick="exportData('json')">📄 Export JSON</button>
+                    <button class="btn btn-success" onclick="exportData('json')">Export JSON</button>
                 </div>
                 <div class="card-body">
                     <div id="statisticsContent">Se încarcă statisticile...</div>
@@ -581,7 +581,7 @@
                         <td>${user.email}</td>
                         <td>${user.created_at || 'N/A'}</td>
                         <td>
-                            <button class="btn btn-danger" onclick="deleteUser(${user.id})">🗑️ Șterge</button>
+                            <button class="btn btn-danger" onclick="deleteUser(${user.id})">Șterge</button>
                         </td>
                     </tr>
                 `;
@@ -640,7 +640,7 @@
                         <td>${product.rating}/5</td>
                         <td>${product.style}</td>
                         <td>
-                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">🗑️ Șterge</button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Șterge</button>
                         </td>
                     </tr>
                 `;
