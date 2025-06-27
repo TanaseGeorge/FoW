@@ -7,7 +7,11 @@
 .welcome-section {
   text-align: center;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   background-image: url('assets/hero-bg.png') !important;
+=======
+  background-image: url('assets/hero-bg.png');
+>>>>>>> Stashed changes
 =======
   background-image: url('assets/hero-bg.png');
 >>>>>>> Stashed changes
