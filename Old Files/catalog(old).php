@@ -4,7 +4,7 @@ require_once 'db.php';
 
 // Verificăm dacă utilizatorul este autentificat
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: login_form.php');
     exit;
 }
 

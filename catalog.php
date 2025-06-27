@@ -76,7 +76,7 @@
         let totalPages = 1;
         let isLoading = false;
 
-        // Referințe la elemente CORECTE (fără brandFilter)
+        // Referințe la elemente 
         const productsContainer = document.getElementById('productsContainer');
         const paginationContainer = document.getElementById('paginationContainer');
         const searchFilter = document.getElementById('searchFilter');
@@ -172,7 +172,6 @@
                     </div>
                     <div class="product-details">
                         <div class="product-price">${product.price} RON</div>
-                        <div class="product-rating">★ ${product.rating}</div>
                     </div>
                 </div>
             `;

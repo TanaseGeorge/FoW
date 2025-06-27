@@ -7,7 +7,7 @@
 
 .welcome-section {
   text-align: center;
-  background-image: url('../assets/hero-bg.png');
+  background-image: url('assets/hero-bg.png') !important;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom center;
@@ -42,10 +42,6 @@
   padding: 1rem;
   text-align: center;
   transition: transform 0.2s;
-}
-
-.shoe-card:hover {
-  transform: translateY(-5px);
 }
 
 .shoe-card img {

@@ -89,7 +89,90 @@ try {
                 jsonResponse(false, null, 'Metodă nepermisă', 405);
             }
             break;
-            
+        
+        // === ÎNREGISTRARE ===
+        case 'register':
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                
+                // Extrage și sanitizează datele
+                $name = sanitize($input['name'] ?? '');
+                $email = sanitize($input['email'] ?? '');
+                $password = $input['password'] ?? '';
+                $confirmPassword = $input['confirm_password'] ?? '';
+                
+                // Validare server-side
+                if (empty($name) || empty($email) || empty($password) || empty($confirmPassword)) {
+                    jsonResponse(false, null, 'Toate câmpurile sunt obligatorii', 400);
+                }
+                
+                // Validare nume
+                if (strlen($name) < 2) {
+                    jsonResponse(false, null, 'Numele trebuie să aibă minim 2 caractere', 400);
+                }
+                
+                // Validare email
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    jsonResponse(false, null, 'Adresa de email nu este validă', 400);
+                }
+                
+                // Validare parolă
+                if (strlen($password) < 6) {
+                    jsonResponse(false, null, 'Parola trebuie să aibă minim 6 caractere', 400);
+                }
+                
+                // Verifică dacă parolele se potrivesc
+                if ($password !== $confirmPassword) {
+                    jsonResponse(false, null, 'Parolele nu se potrivesc', 400);
+                }
+                
+                try {
+                    // Verifică dacă email-ul există deja
+                    $checkStmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                    $checkStmt->execute([$email]);
+                    
+                    if ($checkStmt->fetch()) {
+                        jsonResponse(false, null, 'Un cont cu acest email există deja', 409);
+                    }
+                    
+                    // Hash-uiește parola
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    
+                    // Inserează utilizatorul nou
+                    $insertStmt = $pdo->prepare("
+                        INSERT INTO users (name, email, password, isadmin) 
+                        VALUES (?, ?, ?, 0)
+                    ");
+                    
+                    $insertStmt->execute([$name, $email, $hashedPassword]);
+                    
+                    // Obține ID-ul utilizatorului nou creat
+                    $userId = $pdo->lastInsertId();
+                    
+                    // Log activitatea
+                    error_log("New user registered: ID=$userId, Email=$email");
+                    
+                    jsonResponse(true, [
+                        'user_id' => $userId,
+                        'message' => 'Cont creat cu succes'
+                    ], 'Înregistrare reușită');
+                    
+                } catch (PDOException $e) {
+                    error_log("Database error in register: " . $e->getMessage());
+                    
+                    // Verifică dacă e eroare de duplicat email (fallback)
+                    if (strpos($e->getMessage(), 'duplicate') !== false || strpos($e->getMessage(), 'unique') !== false) {
+                        jsonResponse(false, null, 'Un cont cu acest email există deja', 409);
+                    } else {
+                        jsonResponse(false, null, 'Eroare la crearea contului. Încercați din nou.', 500);
+                    }
+                }
+                
+            } else {
+                jsonResponse(false, null, 'Metodă nepermisă', 405);
+            }
+            break;
+
         case 'logout':
             if ($method === 'POST') {
                 session_destroy();

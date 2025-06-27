@@ -26,7 +26,7 @@ try {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: login_form.php');
     exit;
 }
 ?>
@@ -57,10 +57,10 @@ if (!isset($_SESSION['user_id'])) {
     </nav>
   </header>
 
-  <section class="welcome-section">
+  <div class="welcome-section">
     <h2>Bine ați venit la SmartFoot!</h2>
     <p>Descoperiți colecția noastră de încălțăminte și primiți recomandări personalizate.</p>
-  </section>
+  </div>
 
   <section class="seasonal-recommendations">
     <h2>Recomandări pentru <?php echo $currentSeason; ?></h2>
@@ -84,6 +84,6 @@ if (!isset($_SESSION['user_id'])) {
   </section>
 
   <?php include 'includes/footer.php'; ?>
-  
+
 </body>
 </html>
