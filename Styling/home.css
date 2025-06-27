@@ -1,4 +1,3 @@
-/* Secțiuni full width, aerisite */
 .welcome-section,
 .seasonal-recommendations {
   padding: 3rem 5vw;
@@ -7,7 +6,11 @@
 
 .welcome-section {
   text-align: center;
+<<<<<<< Updated upstream
   background-image: url('assets/hero-bg.png') !important;
+=======
+  background-image: url('assets/hero-bg.png');
+>>>>>>> Stashed changes
   background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom center;

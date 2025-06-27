@@ -403,16 +403,18 @@ try {
                 
                 switch ($entity) {
                     case 'users':
-                        $stmt = $pdo->query("SELECT id, name, email, created_at FROM users ORDER BY created_at DESC");
+                        $stmt = $pdo->query("SELECT id, name, email, isadmin FROM users ORDER BY id DESC");
                         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        
+                    
                         foreach ($users as &$user) {
                             $user['name'] = sanitize($user['name']);
                             $user['email'] = sanitize($user['email']);
                         }
-                        
-                        jsonResponse(true, ['users' => $users]);
+                    
+                        jsonResponse(true, $users, 'Utilizatori încărcați cu succes');
                         break;
+                    
+                    
                         
                     case 'products':
                         $stmt = $pdo->query("SELECT * FROM shoes ORDER BY created_at DESC LIMIT 50");
@@ -446,16 +448,89 @@ try {
                     default:
                         jsonResponse(false, null, 'Entitatea nu există', 404);
                 }
-            } else {
-                jsonResponse(false, null, 'Metodă nepermisă', 405);
+            }  elseif ($method === 'DELETE') {
+                $entity = $_GET['entity'] ?? '';
+                $id = $_GET['id'] ?? null;
+            
+                if (!$id || !is_numeric($id)) {
+                    jsonResponse(false, null, 'ID invalid sau lipsă', 400);
+                }
+            
+                switch ($entity) {
+                    case 'users':
+                        $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+                        $stmt->execute([$id]);
+                        jsonResponse(true, null, 'Utilizator șters cu succes');
+                        break;
+            
+                    case 'products':
+                        $stmt = $pdo->prepare("DELETE FROM shoes WHERE id = ?");
+                        $stmt->execute([$id]);
+                        jsonResponse(true, null, 'Produs șters cu succes');
+                        break;
+            
+                }
+            
+            } elseif ($method === 'POST') {
+                $entity = $_GET['entity'] ?? '';
+            
+                switch ($entity) {
+                    case 'users':
+                        $input = json_decode(file_get_contents('php://input'), true);
+            
+                        $name = sanitize($input['name'] ?? '');
+                        $email = sanitize($input['email'] ?? '');
+                        $password = $input['password'] ?? '';
+                        $isAdmin = intval($input['isAdmin'] ?? 0);
+            
+                        if (!$name || !$email || !$password) {
+                            jsonResponse(false, null, 'Toate câmpurile sunt obligatorii', 400);
+                        }
+            
+                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+                        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, isAdmin) VALUES (?, ?, ?, ?)");
+                        $stmt->execute([$name, $email, $hashedPassword, $isAdmin]);
+            
+                        jsonResponse(true, null, 'Utilizator adăugat cu succes');
+                        break;
+            
+                    case 'products':
+                        $input = json_decode(file_get_contents('php://input'), true);
+            
+                        $name = sanitize($input['name'] ?? '');
+                        $description = sanitize($input['description'] ?? '');
+                        $price = floatval($input['price'] ?? 0);
+                        $brand = sanitize($input['brand'] ?? '');
+                        $occasion = sanitize($input['occasion'] ?? '');
+                        $season = sanitize($input['season'] ?? '');
+                        $style = sanitize($input['style'] ?? '');
+                        $image_url = sanitize($input['image_url'] ?? '');
+            
+                        if (!$name || !$description || !$price) {
+                            jsonResponse(false, null, 'Câmpuri obligatorii lipsă', 400);
+                        }
+            
+                        $stmt = $pdo->prepare("INSERT INTO shoes (name, description, price, brand, occasion, season, style, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$name, $description, $price, $brand, $occasion, $season, $style, $image_url]);
+            
+                        jsonResponse(true, null, 'Produs adăugat cu succes');
+                        break;
+            
+                    default:
+                        jsonResponse(false, null, 'Entitate necunoscută', 400);
+                }
             }
+             default:
+                jsonResponse(false, null, 'Acțiunea nu există', 404);
             break;
+            }
+            
         
-        default:
-            jsonResponse(false, null, 'Acțiunea nu există', 404);
+       
     }
+
     
-} catch (PDOException $e) {
+ catch (PDOException $e) {
     error_log("Database error in API: " . $e->getMessage());
     jsonResponse(false, null, 'Eroare de bază de date', 500);
 } catch (Exception $e) {

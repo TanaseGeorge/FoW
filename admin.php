@@ -3,249 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Styling/admin.css" />
     <title>Panel Administrare - SmartFoot</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-            color: #333;
-        }
-        
-        .header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .nav-tabs {
-            display: flex;
-            background: #34495e;
-            padding: 0 2rem;
-        }
-        
-        .nav-tab {
-            padding: 1rem 2rem;
-            background: none;
-            border: none;
-            color: #ecf0f1;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .nav-tab:hover,
-        .nav-tab.active {
-            background: #3498db;
-        }
-        
-        .main-content {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .card-header {
-            padding: 1rem 1.5rem;
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-        
-        .stat-label {
-            color: #666;
-            margin-top: 0.5rem;
-        }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        
-        .table th,
-        .table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .table th {
-            background: #f8f9fa;
-            font-weight: 600;
-        }
-        
-        .table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background 0.3s;
-            margin-right: 0.5rem;
-        }
-        
-        .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-        
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-        
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #219a52;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-        
-        .error {
-            color: #e74c3c;
-            background: #fdf0ed;
-            padding: 1rem;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-        }
-        
-        .close {
-            float: right;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .close:hover {
-            color: #333;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 0 1rem;
-            }
-            
-            .nav-tabs {
-                flex-wrap: wrap;
-                padding: 0;
-            }
-            
-            .nav-tab {
-                flex: 1;
-                text-align: center;
-                padding: 0.75rem;
-            }
-        }
-    </style>
+
 </head>
 <body>
     <div class="header">
@@ -305,6 +65,8 @@
                 </div>
                 <div class="card-body">
                     <div id="usersContent">Se încarcă utilizatorii...</div>
+    <div id="addUserMsg" class="status-message"></div>
+</div>
                 </div>
             </div>
         </div>
@@ -338,26 +100,34 @@
     
     <!-- Modal pentru adăugare utilizator -->
     <div id="userModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('userModal')">&times;</span>
-            <h3>Adaugă Utilizator Nou</h3>
-            <form id="addUserForm">
-                <div class="form-group">
-                    <label>Nume:</label>
-                    <input type="text" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Parolă:</label>
-                    <input type="password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Adaugă</button>
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('userModal')">&times;</span>
+        <h3>Adaugă Utilizator Nou</h3>
+        <form id="addUserForm">
+            <div class="form-group">
+                <label>Nume:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Parolă:</label>
+                <input type="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label>Rol:</label>
+                <select name="isAdmin" required>
+                    <option value="0">Client</option>
+                    <option value="1">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Adaugă</button>
+        </form>
+        <div id="addUserMsg" class="status-message"></div>
     </div>
+</div>
     
     <!-- Modal pentru adăugare produs -->
     <div id="productModal" class="modal">
@@ -500,7 +270,7 @@
                 
                 // Actualizează cardurile de statistici
                 if (usersData.success) {
-                    document.getElementById('totalUsers').textContent = usersData.data.users.length;
+                    document.getElementById('totalUsers').textContent = usersData.data.users;
                 }
                 
                 if (productsData.success) {
@@ -543,9 +313,9 @@
             try {
                 const response = await fetch('api.php?action=admin&entity=users');
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    displayUsers(result.data.users);
+                    displayUsers(result.data); // data este array-ul de useri
                 } else {
                     document.getElementById('usersContent').innerHTML = '<div class="error">Eroare la încărcarea utilizatorilor.</div>';
                 }
@@ -553,7 +323,9 @@
                 console.error('Eroare la încărcarea utilizatorilor:', error);
                 document.getElementById('usersContent').innerHTML = '<div class="error">Eroare de conexiune.</div>';
             }
-        }
+}
+
+
         
         /**
          * Afișează tabelul cu utilizatori
@@ -566,30 +338,32 @@
                             <th>ID</th>
                             <th>Nume</th>
                             <th>Email</th>
-                            <th>Data Înregistrării</th>
+                            <th>isAdmin</th>
                             <th>Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
-            
+
             users.forEach(user => {
                 html += `
                     <tr>
                         <td>${user.id}</td>
                         <td>${user.name}</td>
                         <td>${user.email}</td>
-                        <td>${user.created_at || 'N/A'}</td>
+                        <td>${user.isAdmin}</td>
                         <td>
                             <button class="btn btn-danger" onclick="deleteUser(${user.id})">Șterge</button>
                         </td>
                     </tr>
                 `;
             });
-            
+
             html += '</tbody></table>';
             document.getElementById('usersContent').innerHTML = html;
-        }
+}
+
+
         
         /**
          * Încarcă produsele
@@ -732,21 +506,43 @@
          * Șterge un utilizator
          */
         function deleteUser(userId) {
-            if (confirm('Ești sigur că vrei să ștergi acest utilizator?')) {
-                alert('Funcționalitatea de ștergere va fi implementată.');
-                // TODO: Implementează DELETE request
+    if (confirm('Ești sigur că vrei să ștergi acest utilizator?')) {
+        fetch(`api.php?action=admin&entity=users&id=${userId}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Utilizatorul a fost șters cu succes.');
+                loadUsers(); // reîncarcă lista
+            } else {
+                alert('Eroare la ștergere: ' + data.message);
             }
-        }
+        });
+    }
+}
+
         
         /**
          * Șterge un produs
          */
         function deleteProduct(productId) {
-            if (confirm('Ești sigur că vrei să ștergi acest produs?')) {
-                alert('Funcționalitatea de ștergere va fi implementată.');
-                // TODO: Implementează DELETE request
+    if (confirm('Ești sigur că vrei să ștergi acest produs?')) {
+        fetch(`api.php?action=admin&entity=products&id=${productId}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Produsul a fost șters cu succes.');
+                loadProducts(); // reîncarcă lista
+            } else {
+                alert('Eroare la ștergere: ' + data.message);
             }
-        }
+        });
+    }
+}
+
         
         // Închide modal-urile când se dă click în afara lor
         window.onclick = function(event) {
@@ -756,15 +552,78 @@
         }
         
         // TODO: Implementează formularele pentru adăugare
-        document.getElementById('addUserForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Formularul de adăugare utilizator va fi implementat.');
-        });
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const data = {
+            name: form.name.value,
+            email: form.email.value,
+            password: form.password.value,
+            isAdmin: parseInt(form.isAdmin.value)
+        };
+
+        try {
+            const response = await fetch('api.php?action=admin&entity=users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById('addUserMsg').innerText = 'Utilizator adăugat cu succes!';
+                form.reset();
+                loadUsers(); // reîncarcă lista
+            } else {
+                document.getElementById('addUserMsg').innerText = 'Eroare: ' + result.message;
+            }
+        } catch (err) {
+            document.getElementById('addUserMsg').innerText = 'Eroare de rețea.';
+            console.error(err);
+        }
+    });
         
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Formularul de adăugare produs va fi implementat.');
+    document.getElementById('addProductForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const msg = document.getElementById('addProductMsg');
+
+    const data = {
+        name: form.name.value.trim(),
+        description: form.description.value.trim(),
+        brand: form.brand.value.trim(),
+        price: parseFloat(form.price.value),
+        style: form.style.value.trim(),
+        image: form.image_url.value.trim()
+    };
+
+    try {
+        const response = await fetch('api.php?action=admin&entity=products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
+
+        const result = await response.json();
+
+        if (result.success) {
+            //msg.innerText = 'Produs adăugat cu succes.';
+            form.reset();
+            loadProducts?.(); // dacă ai funcția definită, o apelează
+            closeModal('productModal');
+        } else {
+            //msg.innerText = 'Eroare: ' + result.message;
+        }
+    } catch (err) {
+        console.error('Eroare la adăugare produs:', err);
+        //msg.innerText = 'Eroare de rețea.';
+    }
+});
     </script>
 </body>
 </html>
