@@ -16,7 +16,7 @@ $currentSeason = getCurrentSeason();
 try {
     $query = "SELECT * FROM shoes 
               WHERE (season = :season OR season = 'all')
-              ORDER BY rating DESC LIMIT 6";
+              ORDER BY id DESC LIMIT 6";
     $stmt = $pdo->prepare($query);
     $stmt->execute([':season' => $currentSeason]);
     $seasonalRecommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -120,11 +120,6 @@
     padding-top: 10px;
 }
 
-.product-rating {
-    color: #f39c12;
-    font-weight: bold;
-}
-
 .product-meta {
     display: flex;
     gap: 0.5rem;

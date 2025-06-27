@@ -241,7 +241,7 @@ try {
                 $where = $whereClause ? 'WHERE ' . implode(' AND ', $whereClause) : '';
                 
                 // Query principal
-                $sql = "SELECT * FROM shoes $where ORDER BY rating DESC LIMIT ? OFFSET ?";
+                $sql = "SELECT * FROM shoes $where ORDER BY id DESC LIMIT ? OFFSET ?";
                 $params[] = $limit;
                 $params[] = $offset;
                 
@@ -417,7 +417,7 @@ try {
                     
                         
                     case 'products':
-                        $stmt = $pdo->query("SELECT * FROM shoes ORDER BY created_at DESC LIMIT 50");
+                        $stmt = $pdo->query("SELECT * FROM shoes ORDER BY created_at DESC");
                         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         foreach ($products as &$product) {

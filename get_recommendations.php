@@ -38,7 +38,7 @@ function generateSuggestion($occasion, $season, $style) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM shoes WHERE season = :season AND occasion = :occasion AND style = :style ORDER BY rating DESC LIMIT 5");
+    $stmt = $pdo->prepare("SELECT * FROM shoes WHERE season = :season AND occasion = :occasion AND style = :style ORDER BY id DESC LIMIT 5");
     $stmt->execute([':season' => $season, ':occasion' => $occasion, ':style' => $style]);
     $shoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

@@ -40,10 +40,6 @@
                     <div class="stat-number" id="totalRecommendations">-</div>
                     <div class="stat-label">Recomandări</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="activeUsers">-</div>
-                    <div class="stat-label">Utilizatori Activi</div>
-                </div>
             </div>
             
             <div class="card">
@@ -270,7 +266,7 @@
                 
                 // Actualizează cardurile de statistici
                 if (usersData.success) {
-                    document.getElementById('totalUsers').textContent = usersData.data.users;
+                    document.getElementById('totalUsers').textContent = usersData.data.length;
                 }
                 
                 if (productsData.success) {
@@ -279,10 +275,8 @@
                 
                 if (statsData.success && statsData.data.admin_stats.length > 0) {
                     const totalRecs = statsData.data.admin_stats.reduce((sum, stat) => sum + parseInt(stat.count), 0);
-                    const activeUsers = statsData.data.admin_stats[0].active_users || 0;
                     
                     document.getElementById('totalRecommendations').textContent = totalRecs;
-                    document.getElementById('activeUsers').textContent = activeUsers;
                     
                     // Afișează statistici rapide
                     displayQuickStats(statsData.data.admin_stats);
@@ -396,7 +390,6 @@
                             <th>Nume</th>
                             <th>Brand</th>
                             <th>Preț</th>
-                            <th>Rating</th>
                             <th>Stil</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -411,7 +404,6 @@
                         <td>${product.name}</td>
                         <td>${product.brand}</td>
                         <td>${product.price} RON</td>
-                        <td>${product.rating}/5</td>
                         <td>${product.style}</td>
                         <td>
                             <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Șterge</button>

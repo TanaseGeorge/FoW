@@ -27,7 +27,6 @@ try {
             style VARCHAR(50) NOT NULL,
             brand VARCHAR(100),
             price DECIMAL(10,2),
-            rating DECIMAL(3,2),
             image_url TEXT
         )",
         'statistics' => "CREATE TABLE IF NOT EXISTS statistics (
@@ -59,7 +58,7 @@ function getShoeRecommendations($occasion, $season, $style) {
                   WHERE occasion = :occasion 
                   AND (season = :season OR season = 'all')
                   AND (style = :style OR style = 'versatile')
-                  ORDER BY rating DESC LIMIT 3";
+                  ORDER BY id DESC LIMIT 3";
                   
         $stmt = $pdo->prepare($query);
         $stmt->execute([
@@ -75,7 +74,7 @@ function getShoeRecommendations($occasion, $season, $style) {
             $query = "SELECT * FROM shoes 
                       WHERE (occasion = :occasion OR occasion = 'versatile')
                       AND (season = :season OR season = 'all')
-                      ORDER BY rating DESC LIMIT 3";
+                      ORDER BY id DESC LIMIT 3";
                       
             $stmt = $pdo->prepare($query);
             $stmt->execute([
