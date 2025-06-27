@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autentificare - ShoeReco</title>
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="Styling/auth.css">
     <style>
         .message {
             margin-bottom: 1rem;

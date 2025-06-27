@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>Recomandări</title>
-    <link rel="stylesheet" href="recommendations.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Styling/recommendations.css">
+    <link rel="stylesheet" href="Styling/style.css">
     <script defer src="recommendations.js"></script>
 </head>
 <body>
@@ -67,5 +67,6 @@ if (!isset($_SESSION['user_id'])) {
 
         <div id="recommendations" class="recommendations"></div>
     </div>
+    <?php include 'includes/footer.php'; ?>
 </body>
 </html>

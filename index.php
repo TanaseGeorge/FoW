@@ -37,8 +37,8 @@ if (!isset($_SESSION['user_id'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SmartFoot – Home</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="Styling/style.css" />
+  <link rel="stylesheet" href="Styling/home.css" />
 </head>
 <body>
   <header>
@@ -83,8 +83,7 @@ if (!isset($_SESSION['user_id'])) {
     <?php endif; ?>
   </section>
 
-  <footer>
-    <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
-  </footer>
+  <?php include 'includes/footer.php'; ?>
+  
 </body>
 </html>

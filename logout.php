@@ -5,6 +5,6 @@ session_start();
 session_destroy();
 
 // Redirecționăm către pagina de login
-header('Location: login.php');
+header('Location: login_form.php');
 exit;
 ?> 

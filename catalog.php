@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFoot - Catalog</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Styling/style.css">
     <link rel="stylesheet" href="Styling/catalogstyle.css">
    
 </head>
@@ -69,9 +69,7 @@
         <div id="paginationContainer"></div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 SmartFoot. Toate drepturile rezervate.</p>
-    </footer>
+    <?php include 'includes/footer.php'; ?>
 
     <script>
         let currentPage = 1;

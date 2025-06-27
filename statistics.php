@@ -19,8 +19,8 @@ $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Statistici</title>
-    <link rel="stylesheet" href="statistics.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Styling/statistics.css">
+    <link rel="stylesheet" href="Styling/style.css">
 </head>
 <body>
 
@@ -75,6 +75,6 @@ $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </form>
         <?php endif; ?>
     </div>
-
+    <?php include 'includes/footer.php'; ?>                        
 </body>
 </html>
